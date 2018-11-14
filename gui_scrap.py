@@ -13,10 +13,10 @@ from bs4 import BeautifulSoup
 
 
 """ Scraps a website, needs to be displayed better though """
-def drudgeGuy():
-    url = ''    #enter website-url here
-    source_code = requests.get(url)
-    plain_text = source_code.text 
+def scrapGUI():
+    url = '#enter url here'    
+    source = requests.get(url)
+    plain_text = source.text 
     soup = BeautifulSoup(plain_text, "html.parser") 
     if soup:
         for column in soup.find_all('a'):
@@ -41,7 +41,7 @@ def TestMenus():
     sg.SetOptions(element_padding=(10, 0))
 
     layout = [
-               [sg.PopupScrolled("JDG", drudgeGuy())],
+               [sg.PopupScrolled("JDG", scrapGUI())],
                [sg.In('JDG', key='input', do_not_clear=False)],
                [sg.OK(button_color=('black', 'red'))]
              ]
