@@ -46,7 +46,7 @@ def TestMenus():
                [sg.OK(button_color=('black', 'red'))]
              ]
 
-    window = sg.Window("JDG Drude Feed", default_element_size=(12, 1), auto_size_text=False, auto_size_buttons=False, auto_close_duration = 2).Layout(layout)
+    window = sg.Window("", default_element_size=(12, 1), auto_size_text=False, auto_size_buttons=False, auto_close_duration = 2).Layout(layout)
     window.Read()
 
 
