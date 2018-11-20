@@ -9,7 +9,9 @@ class getSoup(object):
     def __init__(self, url):
         super(getSoup, self).__init__()
         self.url = url
-            
+
+        
+""" add **args here to search for differnt elements """
     def scrap(self):
         user_url = self.url 
         source_code = requests.get(user_url)
