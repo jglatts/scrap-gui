@@ -1,22 +1,13 @@
-"""
-PySimpleGui program that displays web content from beautifulsoup/requests. 
-TODO:
-    - text format/color/size
-    - import the scrapping module
-    - errors along the way
-"""
-
-#!/usr/bin/env python
 import PySimpleGUI as sg
 import requests
 from bs4 import BeautifulSoup
-
+import string
 
 """ Scraps a website, needs to be displayed better though """
-def scrapGUI():
-    url = '#enter url here'    
-    source = requests.get(url)
-    plain_text = source.text 
+def drudgeGuy():
+    url = ' ' #enter website-url here
+    source_code = requests.get(url)
+    plain_text = source_code.text 
     soup = BeautifulSoup(plain_text, "html.parser") 
     if soup:
         for column in soup.find_all('a'):
@@ -37,18 +28,22 @@ def SecondForm():
 
 
 def TestMenus():
+    output = drudgeGuy().strip()
+    filtered = ''
+    for char in output:
+        if char in string.printable:
+            filtered += char
+
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(10, 0))
 
     layout = [
-               [sg.PopupScrolled("JDG", scrapGUI())],
+               [sg.Multiline(filtered, size=(80,40))],
                [sg.In('JDG', key='input', do_not_clear=False)],
                [sg.OK(button_color=('black', 'red'))]
              ]
 
-    window = sg.Window("", default_element_size=(12, 1), auto_size_text=False, auto_size_buttons=False, auto_close_duration = 2).Layout(layout)
+    window = sg.Window("JDG Drude Feed", default_element_size=(12, 1), auto_size_text=False, auto_size_buttons=False, auto_close_duration = 2).Layout(layout)
     window.Read()
-
-
 
 TestMenus()
