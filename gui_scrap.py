@@ -2,7 +2,6 @@ import PySimpleGUI as sg
 import requests
 from bs4 import BeautifulSoup
 import string
-from class_scrap import getSoup
 
 
 """ Scraps a website, needs to be displayed better though """
