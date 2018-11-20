@@ -2,19 +2,26 @@ import PySimpleGUI as sg
 import requests
 from bs4 import BeautifulSoup
 import string
+from class_scrap import getSoup
+
 
 """ Scraps a website, needs to be displayed better though """
-def drudgeGuy():
-    url = ' ' #enter website-url here
-    source_code = requests.get(url)
-    plain_text = source_code.text 
-    soup = BeautifulSoup(plain_text, "html.parser") 
-    if soup:
-        for column in soup.find_all('a'):
-            print("SCRAPING %s" % url)
-            return soup.get_text()
-    else:
-        return
+class getSoup(object):
+    def __init__(self, url):
+        super(getSoup, self).__init__()
+        self.url = url
+            
+    def scrap(self):
+        user_url = self.url 
+        source_code = requests.get(user_url)
+        plain_text = source_code.text 
+        soup = BeautifulSoup(plain_text, "html.parser") 
+        if soup:
+            for column in soup.find_all('a'):
+                print("SCRAPING %s" % user_url)
+                return soup.get_text()
+        else:
+            return
     
 
 """ Currently not used, but easy to implement if need be """
@@ -28,17 +35,29 @@ def SecondForm():
 
 
 def TestMenus():
-    output = drudgeGuy().strip()
-    filtered = ''
+    # add website-urls here 
+    url_one = getSoup("https://.com/").scrap()
+    url_two = getSoup("https://.com/").scrap()
+    
+    # helper function on the way to get rid of repetition
+    output = url_one.strip()
+    filtered_one = ''
     for char in output:
         if char in string.printable:
-            filtered += char
+            filtered_one += char
+
+    output_two = url_two.strip()
+    filtered_two = ''
+    for char_two in output_two:
+        if char_two in string.printable:
+            filtered_two += char_two
 
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(10, 0))
 
     layout = [
-               [sg.Multiline(filtered, size=(80,40))],
+               [sg.Multiline(filtered_one, size=(80,40)),
+               sg.Multiline(filtered_two, size=(80,40))],
                [sg.In('JDG', key='input', do_not_clear=False)],
                [sg.OK(button_color=('black', 'red'))]
              ]
