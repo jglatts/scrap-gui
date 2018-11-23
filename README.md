@@ -1,4 +1,4 @@
-# scrap-gui
+# gui_scrap
 A PySimpleGUI that displays web content. Early stages.
 
 # buttonGUIscrap
