@@ -48,9 +48,9 @@ def begin_form():
     window = sg.Window('Whadup Mane').Layout(layout)
     while True:
         button, value = window.Read()
-        if button == 'Drudge-GUI':
+        if button == 'Site1-GUI':
             test_menus()
-        elif button == 'Google-GUI':
+        elif button == 'Site2-GUI':
             test_menus(False)
         else:
             return
