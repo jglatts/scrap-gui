@@ -1,5 +1,11 @@
+
+![alt text](https://github.com/jglatts/scrap-gui/blob/master/gui_ebay.png)
+
+
 # gui_scrap
 A PySimpleGUI that displays web content. Early stages.
 
 # buttonGUIscrap
-Quite hacky but starting to look better. Uses buttons to open other windows and display information.
+Search for products on ebay!!
+
+
