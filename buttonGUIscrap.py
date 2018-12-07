@@ -1,8 +1,3 @@
-"""
-
-- Refactor Mane!!! Very cluttered at the moments
-
-"""
 import PySimpleGUI as sg
 import requests
 import string
@@ -24,7 +19,7 @@ def bayscrap(products):
     for items in soup.find_all("div", {"class": "s-item__info clearfix"}):
         print('\n' + items.get_text())
 
-    soldlistings(products)
+    return items.get_text()
 
 
 
@@ -63,74 +58,43 @@ def begin_form():
     while True:
         button, value = window.Read()
         if button == 'Find Products':
-            # call bayscrap() and pass the inputtext over
             val_string = ''.join(value)
             print(val_string)
-            bayscrap(val_string)
+            test_menus(val_string)
         # change to check for text input
         else:
             return
 
-"""
-def test_menus(check=True):
-   """ """ Display information """"""
+def test_menus(product):
+    """ Display information """
 
-    # add website-urls here
-
-    # helper function on the way to get rid of repetition
-    output = url_one.strip()
-    filtered_one = ''
-    for char in output:
-        if char in string.printable:
-            filtered_one += char
-
-    output_two = url_two.strip()
-    filtered_two = ''
-    for char_two in output_two:
+    output = bayscrap(product)
+    filtered = ''
+    for char_two in output:
         if char_two in string.printable:
-            filtered_two += char_two
+            filtered += char_two
 
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(5, 0))
 
-    if check:
-        layout = [
-            [sg.Text('Drudge Report', size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
-                     relief=sg.RELIEF_RIDGE)],
-            [sg.Multiline(filtered_one, size=(70, 12))],
-            # sg.Multiline(filtered_two, size=(80, 20))],
+    layout = [
+            [sg.Text('Ebay-Products', size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+                relief=sg.RELIEF_RIDGE)],
+            [sg.Multiline(output, size=(70, 12))],
             [sg.In('JDG', key='input', do_not_clear=True)],
             [sg.Button('HOME', button_color=('black', 'red')), sg.Button('EXIT')]
         ]
 
-        window = sg.Window("WEAS Feed", default_element_size=(12, 1), auto_size_text=False, auto_size_buttons=True).Layout(layout)
-        # read values from buttons and respond accordingly
-        while True:
-            event, value = window.Read()
-            if event == 'HOME':
-                begin_form()
-            else:
-                return
-    else:
-        layout = [
-            [sg.Text('Google-News', size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
-                     relief=sg.RELIEF_RIDGE)],
-            #[sg.Multiline(filtered_one, size=(80, 20)),
-            [sg.Multiline(filtered_two, size=(70, 12))],
-            [sg.In('JDG', key='input', do_not_clear=True)],
-            [sg.Button('HOME', button_color=('black', 'red')), sg.Button('EXIT')]
-        ]
-
-        window = sg.Window("WEAS Feed", default_element_size=(12, 1), auto_size_text=False,
+    window = sg.Window("WEAS Feed", default_element_size=(12, 1), auto_size_text=False,
                            auto_size_buttons=True).Layout(layout)
-        # read values from buttons and respond accordingly
-        while True:
-            event, value = window.Read()
-            if event == 'HOME':
-                begin_form()
-            else:
-                return
-
-"""
+    # read values from buttons and respond accordingly
+    while True:
+        event, value = window.Read()
+        if event == 'HOME':
+            pass
+        elif event == 'Exit':
+            return
+        else:
+            return
 
 begin_form()
