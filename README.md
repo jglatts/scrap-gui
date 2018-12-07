@@ -2,7 +2,7 @@
 # buttonGUIscrap
 Search for products on ebay and display items on a PySimpleGUI.
 # Usage
-  - simply type a prodcut to search for
+  - simply type a product to search for
   - click the appropriate buttons
   - find banging deals
   - sold listings coming soon
