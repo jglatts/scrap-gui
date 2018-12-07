@@ -10,65 +10,72 @@ from bs4 import BeautifulSoup
 from faker import Faker
 
 
-class GetSoup(object):
-    """ Scraps a website for the GUI to display. A function call may be easier, but we out here learning OOP. """
+def bayscrap(products):
+    """ Get some info from EBAY with requests and bs4. """
+    """ Add empty scrap check """
+    url = 'https://www.ebay.com/sch/' + products
+    # Add headers
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'}
+    source_code = requests.get(url, headers=headers)  # pass the url to requests, HTTP for humans
+    plain_text = source_code.text
 
-    def __init__(self, url):
-        super(GetSoup, self).__init__()
-        self.url = url
+    soup = BeautifulSoup(plain_text, "html.parser")  # pass/parse the url with bs4
+    for items in soup.find_all("div", {"class": "s-item__info clearfix"}):
+        print('\n' + items.get_text())
 
-    """ determine how bs4 will search the provided urls.  """
-    """ Find the more effective way. """
-    def scrap(self, quick_search=True):
-        user_url = self.url
-        source_code = requests.get(user_url)
-        plain_text = source_code.text
-        soup = BeautifulSoup(plain_text, "html.parser")
-        if soup:
-            # logical error here, prints the wrong url
-            print("SCRAPING %s" % user_url)
-            # change the tags that bs4 will search for, find more effective way of doing so
-            if quick_search:
-                # drudge-gui, so this will have 3 columns of content
-                for column in soup.find_all("td"):
-                    return column.get_text()
-            else:
-                # not finding all elements
-                for column in soup.find_all("a"):
-                    return column.get_text()
-        else:
-            return
+    soldlistings(products)
 
+
+
+def soldlistings(products):
+    """ Scrap EBAY for sold items of the search product.
+    This changes the url to find the sold listings.
+    New URL will be fed to requests\bs4.  """
+
+    print('\nDisplaying Sold Items For:' + ' ' + products.title() + '\n')
+    sold_url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' + products + '&_sacat=0&LH_Sold=1&_dmd=2'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'}
+    src_sold = requests.get(sold_url, headers=headers)  # pass the url to requests, HTTP for humans
+    bs4_text = src_sold.text
+
+    # Throw findings to bs4 then display
+    sold_soup = BeautifulSoup(bs4_text, 'html.parser')
+    for sold in sold_soup.find_all("li", {"class": "s-item"}):
+        print('\n' + sold.get_text())
 
 
 def begin_form():
-    """ Prompt the user which site to scrap, input via buttons and text """
+    """ Prompt the user what products to find """
 
     sg.ChangeLookAndFeel('TealMono')
     layout = [
-                [sg.Text('Scrap Feed!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+                [sg.Text('Search Ebay!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
                  relief=sg.RELIEF_RIDGE)],
-                [sg.Button('Drudge-GUI', button_color=('black', 'red'), font=("Helvetica", 35)),
-                 sg.Button('Google-GUI', font=("Helvetica", 35))]
+                # change to text input field
+                [sg.Text('Enter products to search for', pad=(210, 5))],
+                [sg.InputText(focus=True, pad=(130, 5))],
+                [sg.Button('Find Products', button_color=('black', 'red'), font=("Helvetica", 15), pad=(225, 5))]
              ]
 
-    window = sg.Window('Whadup Mane').Layout(layout)
+    window = sg.Window('Find Products').Layout(layout)
     while True:
         button, value = window.Read()
-        if button == 'Drudge-GUI':
-            test_menus()
-        elif button == 'Google-GUI':
-            test_menus(False)
+        if button == 'Find Products':
+            # call bayscrap() and pass the inputtext over
+            val_string = ''.join(value)
+            print(val_string)
+            bayscrap(val_string)
+        # change to check for text input
         else:
             return
 
-
+"""
 def test_menus(check=True):
-    """ Display information """
+   """ """ Display information """"""
 
     # add website-urls here
-    url_one = GetSoup("https://www.drudgereport.com/").scrap()
-    url_two = GetSoup("https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxYUdjU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en").scrap(False)
 
     # helper function on the way to get rid of repetition
     output = url_one.strip()
@@ -124,5 +131,6 @@ def test_menus(check=True):
             else:
                 return
 
+"""
 
 begin_form()
