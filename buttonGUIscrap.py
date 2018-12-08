@@ -15,11 +15,13 @@ def bayscrap(products):
     source_code = requests.get(url, headers=headers)  # pass the url to requests, HTTP for humans
     plain_text = source_code.text
 
+    content = []
     soup = BeautifulSoup(plain_text, "html.parser")  # pass/parse the url with bs4
     for items in soup.find_all("div", {"class": "s-item__info clearfix"}):
         print('\n' + items.get_text())
+        content.append(items.get_text())
 
-    return items.get_text()
+    return content
 
 
 
@@ -76,9 +78,10 @@ def test_menus(product):
 
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(5, 0))
+    heading = ("%s-products" % product)
 
     layout = [
-            [sg.Text('Ebay-Products', size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+            [sg.Text(heading.title(), size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
                 relief=sg.RELIEF_RIDGE)],
             [sg.Multiline(output, size=(70, 12))],
             [sg.In('JDG', key='input', do_not_clear=True)],
