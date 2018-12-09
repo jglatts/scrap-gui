@@ -2,12 +2,12 @@ import PySimpleGUI as sg
 import requests
 import string
 from bs4 import BeautifulSoup
-from faker import Faker
 
 
 def bayscrap(products):
-    """ Get some info from EBAY with requests and bs4. """
-    """ Add empty scrap check """
+    """ Get some info from EBAY with requests and bs4.
+        Add empty scrap check 
+    """
     url = 'https://www.ebay.com/sch/' + products
     # Add headers
     headers = {
@@ -29,9 +29,9 @@ def bayscrap(products):
 
 def sold_menu(products):
     """ Scrap EBAY for sold items of the search product.
-    This changes the url to find the sold listings.
-    New URL will be fed to requests\bs4.
-    BREAK THIS UP MAYNE
+        This changes the url to find the sold listings.
+        New URL will be fed to requests\bs4.
+        BREAK THIS UP MAYNE
     """
 
     print('\nDisplaying Sold Items For:' + ' ' + products.title() + '\n')
