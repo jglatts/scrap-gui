@@ -59,24 +59,31 @@ def sold_menu(products):
     sold_soup = BeautifulSoup(bs4_text, 'html.parser')
     filtered = ''
     for sold in sold_soup.find_all("li", {"class": "s-item"}):
-        print('\n' + sold.get_text())
+        #print('\n' + sold.get_text())
         for char in sold.get_text():
             if char in string.printable:
                 filtered += char
         filtered += '\n\n\n'
 
-    # throw all this in helper func()
-    print(filtered)
+    return filtered
+
+
+def sold_form(product):
+    """ GUI for sold products """
+
+    content = sold_menu(product)
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(5, 0))
-    heading = ("sold %s-products" % products)
+    heading = ("sold %s-products" % product)
 
     layout = [
             [sg.Text(heading.title(), size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
                 relief=sg.RELIEF_RIDGE)],
-            [sg.Multiline(filtered, size=(70, 12))],
+            [sg.Multiline(content, size=(70, 12))],
             [sg.In('JDG', key='input', do_not_clear=True)],
-            [sg.Button('HOME', button_color=('black', 'white')), sg.Button('Sold-Listings', button_color=('black', 'white')), sg.Button('EXIT', button_color=('black', 'white'))]
+            [sg.Button('HOME', button_color=('black', 'white')), sg.Button('Sold-Listings',
+            button_color=('black', 'white')), sg.Button('Change URL', button_color=('black', 'white')),
+             sg.Button('EXIT', button_color=('black', 'white'))]
         ]
 
     window = sg.Window("Ebay Feed", default_element_size=(12, 1), auto_size_text=False,
@@ -88,7 +95,9 @@ def sold_menu(products):
         if event == 'HOME':
             begin_form()
         elif event == 'Sold-Listings':
-            sold_menu(product)
+            sold_form(product)
+        elif event == 'Change URL':
+            begin_form()
         else:
             return
 
@@ -96,6 +105,7 @@ def sold_menu(products):
 def begin_form():
     """ Prompt the user what products to find """
 
+    searches = []
     sg.ChangeLookAndFeel('LightGreen')
     layout = [
                 [sg.Text('Search Ebay!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
@@ -110,14 +120,18 @@ def begin_form():
         button, value = window.Read()
         if button == 'Find Products':
             val_string = ''.join(value)
-            print(val_string)
+            #print(val_string)
+            # keep track of the searches
+            searches.append(val_string)
             test_menus(val_string)
         else:
+            exit_dsply(searches)
             return
 
 
+
 def test_menus(product):
-    """ First GUI page. Scraps ebay for products.
+    """ Initial GUI product page. Scraps ebay for products.
         TODO:
             - add links
             - more button options
@@ -130,7 +144,7 @@ def test_menus(product):
     for char_two in output:
         if char_two in string.printable:
             filtered += char_two
-    print(filtered)
+    #print(filtered)
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(5, 0))
     heading = ("%s-products" % product)
@@ -153,9 +167,28 @@ def test_menus(product):
         if event == 'HOME':
             begin_form()
         elif event == 'Sold-Listings':
-            sold_menu(product)
+            sold_form(product)
+        # same functionality as HOME btn
+        # upgrade this ish
+        elif event == 'Change URL':
+            begin_form()
         else:
             return
 
+
+def exit_dsply(searches):
+    """ Display console info about searches"""
+
+    # count searches
+    for idx in searches:
+        # get rid of print statement
+        add_idx += idx
+
+    print("\nAmount of Searches: %d" % add_idx)
+
+    # print all searches
+    for search in searches:
+        print("\n")
+        print(search)
 
 begin_form()
