@@ -14,8 +14,6 @@
 
 """
 
-
-
 import PySimpleGUI as sg
 import requests
 import string
