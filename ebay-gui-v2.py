@@ -50,7 +50,7 @@ def bayscrap(products):
     return content
 
 
-def sold_menu(products):
+def get_sold_scrap(products):
     """ Scrap EBAY for sold items of the search product. """
 
     print('\nDisplaying Sold Items For:' + ' ' + products.title() + '\n')
@@ -75,7 +75,7 @@ def sold_menu(products):
 def sold_form(product, number_search):
     """ GUI for sold products """
 
-    content = sold_menu(product)
+    content = get_sold_scrap(product)
     sg.ChangeLookAndFeel('GreenMono')
     sg.SetOptions(element_padding=(5, 0))
     heading = ("sold %s-products" % product)
@@ -99,7 +99,7 @@ def sold_form(product, number_search):
         if event == 'HOME':
             begin_form(searches)
         elif event == 'Sold-Listings':
-            sold_form(product)
+            sold_form(product, number_search)
         elif event == 'Change URL':
             begin_form(searches)
         else:
@@ -120,12 +120,12 @@ def begin_form(searches, number_search):
                 [sg.Menu(menu_def, tearoff=True)],
                 [sg.Text('Search Ebay!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
                  relief=sg.RELIEF_RIDGE)],
-                [sg.Text('Enter products to search for', pad=(210, 5))],
-                [sg.InputText(focus=True, pad=(130, 5))],
-                [sg.Button('Find Products', button_color=('black', 'red'), font=("Helvetica", 15), pad=(225, 5))]
+                [sg.Text('Enter products to search for', pad=(180, 0), font=("Helvetica", 13))],
+                [sg.InputText(focus=True, pad=(120, 0))],
+                [sg.Button('Find Products', button_color=('black', 'red'), font=("Helvetica", 15), pad=(215, 10))]
              ]
 
-    window = sg.Window('Find Products').Layout(layout)
+    window = sg.Window('Find Products', border_depth=5).Layout(layout)
     while True:
         button, value = window.Read()
         if button == 'Find Products':
@@ -135,7 +135,7 @@ def begin_form(searches, number_search):
             searches.append(val_string)
             number_search += 1;
             print('\n%d\n' % number_search)
-            test_menus(val_string, number_search)
+            product_page(val_string, number_search)
         elif button == 'All Searches':
             all_searches(searches, number_search)
         else:
@@ -145,7 +145,7 @@ def begin_form(searches, number_search):
 
 
 
-def test_menus(product, number_search):
+def product_page(product, number_search):
     """ Initial GUI product page. Scraps ebay for products.
         TODO:
             - add links
@@ -196,12 +196,13 @@ def test_menus(product, number_search):
 def exit_dsply(no_searches):
     """ Print the number of searches made when the user exits """
     # Printing multiple lines, figure out bug
-    # print("\nYou made %d searches" % no_searches)
+    print("\nYou made %d searches" % no_searches)
 
 
 def all_searches(search_hist, size):
     """ Print all the searches that have been made """
     for i in range(size):
+        search_string = search_hist[i]
         sg.Popup(search_hist[i])
 
 
