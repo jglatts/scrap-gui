@@ -4,7 +4,7 @@
 ![alt text](https://github.com/jglatts/scrap-gui/blob/master/gui_products.png)
 # Sold products
 ![alt text](https://github.com/jglatts/scrap-gui/blob/master/gui_sold.png)
-# buttonGUIscrap
+# ebay-gui
 Search for products on ebay and display items on a PySimpleGUI.
 # Usage
   - simply type a product to search for
