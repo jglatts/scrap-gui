@@ -63,7 +63,7 @@ def get_sold_scrap(products):
     sold_soup = BeautifulSoup(bs4_text, 'html.parser')
     filtered = ''
     for sold in sold_soup.find_all("li", {"class": "s-item"}):
-        #print('\n' + sold.get_text())
+        # print('\n' + sold.get_text())
         for char in sold.get_text():
             if char in string.printable:
                 filtered += char
@@ -77,27 +77,27 @@ def sold_form(product, number_search):
 
     content = get_sold_scrap(product)
     sg.ChangeLookAndFeel('GreenMono')
-    sg.SetOptions(element_padding=(5, 0))
     heading = ("sold %s-products" % product)
 
     layout = [
-            [sg.Text(heading.title(), size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
-                relief=sg.RELIEF_RIDGE)],
-            [sg.Multiline(content, size=(70, 12))],
-            [sg.In('JDG', key='input', do_not_clear=True)],
-            [sg.Button('HOME', button_color=('black', 'white')), sg.Button('Sold-Listings',
-            button_color=('black', 'white')), sg.Button('Change URL', button_color=('black', 'white')),
-             sg.Button('EXIT', button_color=('black', 'white'))]
-        ]
+        [sg.Text(heading.title(), size=(30, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+                 relief=sg.RELIEF_RIDGE, pad=(235, 3))],
+        [sg.Multiline(content, size=(175, 15))],
+        [sg.In('JDG', key='input', do_not_clear=True)],
+        [sg.Button('HOME', button_color=('black', 'white')), sg.Button('Sold-Listings',
+                                                                       button_color=('black', 'white')),
+         sg.Button('Change URL', button_color=('black', 'white')),
+         sg.Button('EXIT', button_color=('black', 'white'))]
+    ]
 
     window = sg.Window("Ebay Feed", default_element_size=(12, 1), auto_size_text=False,
-                           auto_size_buttons=True).Layout(layout)
+                       auto_size_buttons=True, border_depth=5).Layout(layout)
 
     # read values from buttons and respond accordingly
     while True:
         event, value = window.Read()
         if event == 'HOME':
-            begin_form(searches)
+            begin_form(searches, number_search)
         elif event == 'Sold-Listings':
             sold_form(product, number_search)
         elif event == 'Change URL':
@@ -112,18 +112,19 @@ def begin_form(searches, number_search):
 
     sg.ChangeLookAndFeel('LightGreen')
     menu_def = [
-                 ['Search History', ['&All Searches']],
-                 ['URL Info'],
-                 ['About'],
-               ]
+        ['Search History', ['&All Searches']],
+        ['URL Info'],
+        ['About'],
+    ]
     layout = [
-                [sg.Menu(menu_def, tearoff=True)],
-                [sg.Text('Search Ebay!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+        [sg.Menu(menu_def, tearoff=True)],
+        [sg.Text('Search Ebay!', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
                  relief=sg.RELIEF_RIDGE)],
-                [sg.Text('Enter products to search for', pad=(180, 0), font=("Helvetica", 13))],
-                [sg.InputText(focus=True, pad=(120, 0))],
-                [sg.Button('Find Products', button_color=('black', 'red'), font=("Helvetica", 15), pad=(215, 10))]
-             ]
+        [sg.Text('Enter products to search for', pad=(180, 0), font=("Helvetica", 13))],
+        [sg.InputText(focus=True, pad=(120, 0))],
+        [sg.Button('Find Products', button_color=('black', 'red'), font=("Helvetica", 15), pad=(215, 10),
+                   bind_return_key=True)]
+    ]
 
     window = sg.Window('Find Products', border_depth=5).Layout(layout)
     while True:
@@ -144,7 +145,6 @@ def begin_form(searches, number_search):
             return
 
 
-
 def product_page(product, number_search):
     """ Initial GUI product page. Scraps ebay for products.
         TODO:
@@ -159,23 +159,25 @@ def product_page(product, number_search):
     for char_two in output:
         if char_two in string.printable:
             filtered += char_two
-    #print(filtered)
+    # print(filtered)
     sg.ChangeLookAndFeel('GreenMono')
-    sg.SetOptions(element_padding=(5, 0))
     heading = ("%s-products" % product)
 
     layout = [
-            [sg.Text(heading.title(), size=(20, 1), justification='center', font=("Helvetica", 35), text_color="blue",
-                relief=sg.RELIEF_RIDGE)],
-            [sg.Multiline(output, size=(70, 12))],
-            [sg.In('JDG', key='input', do_not_clear=True)],
+        [sg.Text(heading.title(), size=(30, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+                 relief=sg.RELIEF_RIDGE, pad=(235, 3))],
+        [sg.Multiline(output, size=(175, 15))],
+        [sg.In('JDG', key='input', do_not_clear=True)],
         [sg.Button('HOME', button_color=('black', 'white')),
-         sg.Button('Sold-Listings', button_color=('black', 'white')), sg.Button('Change URL', button_color=('black', 'white')),
+         sg.Button('Sold-Listings', button_color=('black', 'white')),
+         sg.Button('Change URL', button_color=('black', 'white')),
          sg.Button('EXIT', button_color=('black', 'white'))]
     ]
 
     window = sg.Window("Ebay Feed", default_element_size=(12, 1), auto_size_text=False,
-                           auto_size_buttons=True).Layout(layout)
+                       auto_size_buttons=True, border_depth=5).Layout(layout)
+    # having trouble re-sizing the window
+    window.Size = 190, 50
 
     # read values from buttons and respond accordingly
     while True:
