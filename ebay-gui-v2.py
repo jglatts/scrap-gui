@@ -13,10 +13,9 @@
     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     TO-DO:
-        - Clean up
         - Rename functions
         - Eliminate global variables
-        - Add more sites
+        - Fix search counting issues
 
 """
 
@@ -40,7 +39,8 @@ def bayscrap(products):
 
     content = ''
     soup = BeautifulSoup(plain_text, "html.parser")
-    for items in soup.find_all("div", {"class": "s-item__info clearfix"}):
+    # trying to attach links as they're found
+    for items in soup.find_all("div", {"class": "s-item__info clearfix"}, "a"):
         # filtering
         for char in items.get_text():
             if char in string.printable:
@@ -62,7 +62,8 @@ def get_sold_scrap(products):
 
     sold_soup = BeautifulSoup(bs4_text, 'html.parser')
     filtered = ''
-    for sold in sold_soup.find_all("li", {"class": "s-item"}):
+    # trying to attach links as they're found
+    for sold in sold_soup.find_all("li", {"class": "s-item"}, "a"):
         # print('\n' + sold.get_text())
         for char in sold.get_text():
             if char in string.printable:
@@ -86,7 +87,6 @@ def sold_form(product, number_search):
         [sg.In('JDG', key='input', do_not_clear=True)],
         [sg.Button('HOME', button_color=('black', 'white')), sg.Button('Sold-Listings',
                                                                        button_color=('black', 'white')),
-         sg.Button('Change URL', button_color=('black', 'white')),
          sg.Button('EXIT', button_color=('black', 'white'))]
     ]
 
@@ -100,8 +100,6 @@ def sold_form(product, number_search):
             begin_form(searches, number_search)
         elif event == 'Sold-Listings':
             sold_form(product, number_search)
-        elif event == 'Change URL':
-            begin_form(searches)
         else:
             exit_dsply(number_search)
             return
@@ -110,11 +108,11 @@ def sold_form(product, number_search):
 def begin_form(searches, number_search):
     """ Prompt the user what products to find """
 
-    sg.ChangeLookAndFeel('LightGreen')
+    sg.ChangeLookAndFeel('GreenMono')
     menu_def = [
         ['Search History', ['&All Searches']],
-        ['URL Info'],
-        ['About'],
+        ['URL Info', ['&Change Site']],
+        ['About', ['&All Searches', '&Help']],
     ]
     layout = [
         [sg.Menu(menu_def, tearoff=True)],
@@ -130,15 +128,23 @@ def begin_form(searches, number_search):
     while True:
         button, value = window.Read()
         if button == 'Find Products':
+            number_search += 1
             val_string = ''.join(value[1])
             print(val_string)
             # keep track of the searches
             searches.append(val_string)
-            number_search += 1;
             print('\n%d\n' % number_search)
             product_page(val_string, number_search)
         elif button == 'All Searches':
             all_searches(searches, number_search)
+        elif button == 'Change Site':
+            # is there a less harsh way to window.Hide()?
+            window.Hide()
+            change_gui()
+            window.UnHide()
+        elif button == 'Help':
+            # add func() call here
+            pass
         else:
             # getting trash values for number_search
             exit_dsply(number_search)
@@ -154,11 +160,6 @@ def product_page(product, number_search):
      """
 
     output = bayscrap(product)
-    # work on filtering
-    filtered = ''
-    for char_two in output:
-        if char_two in string.printable:
-            filtered += char_two
     # print(filtered)
     sg.ChangeLookAndFeel('GreenMono')
     heading = ("%s-products" % product)
@@ -170,12 +171,12 @@ def product_page(product, number_search):
         [sg.In('JDG', key='input', do_not_clear=True)],
         [sg.Button('HOME', button_color=('black', 'white')),
          sg.Button('Sold-Listings', button_color=('black', 'white')),
-         sg.Button('Change URL', button_color=('black', 'white')),
          sg.Button('EXIT', button_color=('black', 'white'))]
     ]
 
     window = sg.Window("Ebay Feed", default_element_size=(12, 1), auto_size_text=False,
                        auto_size_buttons=True, border_depth=5).Layout(layout)
+
     # having trouble re-sizing the window
     window.Size = 190, 50
 
@@ -188,11 +189,75 @@ def product_page(product, number_search):
             sold_form(product, number_search)
         # same functionality as HOME btn
         # upgrade this ish
-        elif event == 'Change URL':
-            begin_form(searches, number_search)
         else:
             exit_dsply(number_search)
             return
+
+
+def new_scrap(new_url):
+    """ Scrap the new site and return some info """
+    pass # for now
+
+
+def change_gui():
+    """ Change the site and find more info """
+    sg.ChangeLookAndFeel('LightGreen')
+    menu_def = [
+        # wire new menu
+        #['', ['']],
+    ]
+    layout = [
+        # add a new menu later
+        #[sg.Menu(menu_def, tearoff=True)],
+        [sg.Text('New Site', size=(21, 1), justification='center', font=("Helvetica", 35), text_color="blue",
+                 relief=sg.RELIEF_RIDGE)],
+        [sg.Text('Enter a new website (just the name)', pad=(180, 0), font=("Helvetica", 13))],
+        [sg.InputText(focus=True, pad=(120, 0))],
+        [sg.Button('Scrap Site', button_color=('black', 'red'), font=("Helvetica", 15), pad=(215, 10),
+                   bind_return_key=True)]
+    ]
+    window = sg.Window('New Site', border_depth=5).Layout(layout)
+    while True:
+        # call the GUI with Read()
+        button, value = window.Read()
+        if value == 'Scrap Site':
+            # UNCOMMENT TO HOOK-UP
+            get_string = ''.join(value[1])
+            # call helper func() and pass val_string
+            #new_scrap(get_string)
+            begin_form(searches, number_search)
+
+
+def new_scrap(new_url):
+    """ Scrap a new url that the user provides
+        Don't rewrite other GUI's, wire this one to them
+    """
+    url = 'https://www.' + new_url + '.com'  # get new base url
+    # Add headers
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'}
+    source_code = requests.get(url, headers=headers)
+    plain_text = source_code.text
+
+    content = ''
+    soup = BeautifulSoup(plain_text, "html.parser")
+    output = soup.prettify()
+
+    # get the size in order to fill format the content
+    size = len(soup.prettify())
+    for i in range(size):
+        for char_two in output:
+            if char_two in string.printable:
+                content += char_two
+
+        content += '\n'
+
+    # call the GUI to display new sit
+    display_new_site(content)
+
+
+def display_new_site(output):
+    """  """
 
 
 def exit_dsply(no_searches):
@@ -203,12 +268,14 @@ def exit_dsply(no_searches):
 
 def all_searches(search_hist, size):
     """ Print all the searches that have been made """
-    for i in range(size):
-        search_string = search_hist[i]
-        sg.Popup(search_hist[i])
+    if size == 1:
+        sg.Popup("You've made %d search" % size)
+    else:
+        sg.Popup("You've made %d searches" % size)
 
 
 # begin program with fresh search history
 searches = []
+# double check where number_search is incrementing
 number_search = 0
 begin_form(searches, number_search)
