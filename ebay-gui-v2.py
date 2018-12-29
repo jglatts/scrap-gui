@@ -38,9 +38,19 @@ def bayscrap(products):
     plain_text = source_code.text
 
     content = ''
+    str_links = ''
     soup = BeautifulSoup(plain_text, "html.parser")
-    # trying to attach links as they're found
-    for items in soup.find_all("div", {"class": "s-item__info clearfix"}, "a"):
+    for items in soup.find_all("div", {"class": "s-item__info clearfix"}):
+        # attach links as they're found
+        for links in items.find_all("a", href=True):
+            # maybe overkill?
+            print(links['href'])
+            for link_char in links['href']:
+                if link_char in string.printable:
+                    str_links += link_char
+            #str_links.append(links['href'])
+        # check where this is going
+        content += str_links
         # filtering
         for char in items.get_text():
             if char in string.printable:
@@ -263,7 +273,7 @@ def display_new_site(output):
 def exit_dsply(no_searches):
     """ Print the number of searches made when the user exits """
     # Printing multiple lines, figure out bug
-    print("\nYou made %d searches" % no_searches)
+    # print("\nYou made %d searches" % no_searches)
 
 
 def all_searches(search_hist, size):
