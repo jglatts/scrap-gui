@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+#
+# Author: John Glatts
+# This is a program for searching\scraping EBAY.
+# Search for Products, and see when\how much they sold for.
+#
+#
 import PySimpleGUI as sg
 import requests
 import string
